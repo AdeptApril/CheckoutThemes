@@ -2,6 +2,7 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <string.h>
+#include <unistd.h> //For chdir()
 #define MAX_LIBRARY_NAME 20
 
 struct FtpFile {
@@ -11,8 +12,9 @@ struct FtpFile {
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream);
 static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream);
-int extractTheme(const char * filename);
+int runExec(char * filename, char * params);
 void setInstallName(char * installName, char * themeLocation);
+void runBatch(char * installName, char * libraryName, short languageNum);
 
 int main(void) {
     //Setup CURL and the local file
@@ -22,6 +24,7 @@ int main(void) {
     char libraryName[MAX_LIBRARY_NAME];
     short languageNum;
     char installName[FILENAME_MAX];
+    char params[FILENAME_MAX];
 
     //Set the appropriate URL. This should be set by command line
     //The general idea is to download the appropriate text file that says
@@ -69,7 +72,7 @@ int main(void) {
     printf("File to download: %s\n", themeLocation); //Debugging.
 
     //Download the file specified in the txt file.
-//#if(0) //Used to decrease the amount I'm downloading while testing
+#if(0) //Used to decrease the amount I'm downloading while testing
     curl = curl_easy_init();
     if (curl) {
         struct FtpFile ftpfile = {
@@ -92,28 +95,44 @@ int main(void) {
         }
 
         //Decompress file
-        extractTheme(ftpfile.filename);
-//#endif
+        runExec((char *)ftpfile.filename, NULL);
+#endif
         //Run appropriate .bat file
         //This should allow changing into the install directory, and with
         //"AsLanguage3" or something added it should match the batch file.
-        setInstallName(&installName, &themeLocation);
+        setInstallName((char*)&installName, (char*)&themeLocation); //This is to get the directory to cd into
+        runBatch((char*)&installName, (char*)&libraryName, languageNum);
 
         //Cleanup
+        //Remember to clean up theme.exe, themechoice.txt, and whatever the install directory was.
+
+        //Delete the install directory
+        sprintf(params, "%s /s /q", (char*)installName);
+        printf("rmdir command: rmdir %s\n", params);
+        runExec("rmdir", params);
+
+        //Delete theme.exe
+        sprintf(params, "theme.exe /q");
+        runExec("del", params);
+
+        //Delete themechoice.txt
+        sprintf(params, "themechoice.txt /q");
+        runExec("del", params);
+
         curl_easy_cleanup(curl);
         fclose(fp);
-    } //Needs to be commented out with the #endif
+    //} //Needs to be commented out with the #endif
     return 0;
-}
+} //End of main()
 
-int extractTheme(const char * filename){
+int runExec(char * filename, char * params){
     //Taken from:
     //http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1044654269&id=1043284392
       HINSTANCE hRet = ShellExecute(
         HWND_DESKTOP, //Parent window
         "open",       //Operation to perform
         filename,       //Path to program
-        NULL,         //Parameters
+        params,         //Parameters
         NULL,         //Default directory
         SW_SHOW);     //How to open
 
@@ -187,6 +206,33 @@ void setInstallName(char * installName, char * themeLocation) {
             }
         }
     }
-    printf("installName after: %s", installName);
+    printf("installName after: %s\n", installName);
+    return;
+}
+
+void runBatch(char * installName, char * libraryName, short languageNum){
+    chdir(installName); //Get into the directory to run the batch file first.
+    //Using sprintf, then a while loop, then sprintf again, batchName should
+    //eventually end up being in the format I've been creating batchNames
+    char batchName[FILENAME_MAX];
+    sprintf(batchName, "%s%d", libraryName, languageNum);
+    int b = strlen(batchName);
+    int i = 0;
+    //While not "Theme"
+    while ( !( (installName[i] == 'T') && (installName[i+1] == 'h') && (installName[i+2] == 'e') && (installName[i+3] == 'm') && (installName[i+4] == 'e')) ){
+        //printf("installName[i+j]: %c\n", installName[i+j]);
+        //printf("installName[.exe] area: %c%c%c%c\n", installName[i+j], installName[i+j+1], installName[i+j+2], installName[i+j+3] );
+        if ( (installName[i] == '\n') || (installName[i] == EOF) )
+            exit(1); //This shouldn't happen.
+        batchName[b+i] = installName[i];
+        i++;
+    }
+    //strcat() would be another option, here, rather than giving a mid-string address for batchName
+    sprintf(&batchName[b+i], "AsLanguage%d.bat", languageNum);
+    printf("batchName: %s\n", batchName);
+
+    //Now to actually execute the batch file
+    runExec(batchName, NULL);
+    chdir(".."); //Get back to the original directory.
     return;
 }
