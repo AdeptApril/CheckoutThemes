@@ -3,6 +3,7 @@
 #include <curl/easy.h>
 #include <string.h>
 #include <unistd.h> //For chdir()
+#include <ctype.h> //For tolower() and toupper()
 #define MAX_LIBRARY_NAME 20
 
 struct FtpFile {
@@ -16,15 +17,25 @@ int runExec(char * filename, char * params);
 void setInstallName(char * installName, char * themeLocation);
 void runBatch(char * installName, char * libraryName, short languageNum);
 
-int main(void) {
+int main(int argc, char *argv[]) {
+    if ((argc != 4) || (*argv[2] < 1) || (*argv[3] < 1) ) {
+        printf("Usage: ThemeUpdater (libraryName) (machineNumber) (languageNumber)\n");
+        exit(1);
+    }
     //Setup CURL and the local file
     CURL *curl;
     FILE *fp;
     char themeLocation[FILENAME_MAX];
     char libraryName[MAX_LIBRARY_NAME];
-    short languageNum;
+    int machineNum;
+    int languageNum;
     char installName[FILENAME_MAX];
     char params[FILENAME_MAX];
+
+    //Read in the command-line variables
+    strcpy(libraryName, argv[1]);
+    machineNum = *argv[2];
+    languageNum = *argv[3];
 
     //Set the appropriate URL. This should be set by command line
     //The general idea is to download the appropriate text file that says
@@ -32,10 +43,24 @@ int main(void) {
     //The name of the library should also be set with the command line.
     //The language # should also be set.
     //And the self-check # should be set.
-    strcpy(libraryName, "Sequoya");
-    languageNum = 3;
-    char *url = "http://www.checkoutthemes.com/sequoya/checkout3/lang3choice.txt";
+    //strcpy(libraryName, "Sequoya");
+    //languageNum = 3;
+    char url[FILENAME_MAX]; //Set by variables, now. = "http://www.checkoutthemes.com/sequoya/checkout3/lang3choice.txt";
     char outfilename[FILENAME_MAX] = "themechoice.txt";
+
+    //Setup URL
+    //Setup library name for URL. Needs to be all lowercase. The first
+    //letter should be capitalized in later usage.
+    int i;
+    for(i = 0; libraryName[i]; i++) {
+        libraryName[i] = tolower(libraryName[i]);
+    }
+    sprintf(url, "http://www.checkoutthemes.com/%s/checkout%d/lang%dchoice.txt", libraryName, machineNum, languageNum);
+    libraryName[0] = toupper(libraryName[0]); //First letter is capitalized outside of URL usage
+
+    printf("url: %s\n", url);
+    exit(0);
+
     curl = curl_easy_init();
     if (curl) {
         //CURLcode res;
@@ -79,7 +104,7 @@ int main(void) {
             "theme.exe",
             NULL
         };
-        url = themeLocation;
+        strcpy(url, themeLocation);
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, my_fwrite);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
@@ -109,7 +134,7 @@ int main(void) {
         curl_easy_cleanup(curl);
         fclose(fp);
 
-        //Delete the install directory
+        //Deleting of the created files
         //This would be much better done with something other than system(),
         //but when trying to use runExec, no DOS commands would work. They
         //seem to require the path to be explicit. This would be fine if I
@@ -118,6 +143,7 @@ int main(void) {
         //changed multiple times between those versions, and is not possible.
         //However, system() still works. It's just not a good idea.
 
+        //Delete the install directory
         sprintf(params, "rmdir %s /s /q", (char*)installName);
         system(params);
 
