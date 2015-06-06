@@ -38,7 +38,7 @@ int main(void) {
     char outfilename[FILENAME_MAX] = "themechoice.txt";
     curl = curl_easy_init();
     if (curl) {
-        CURLcode res;
+        //CURLcode res;
         fp = fopen(outfilename,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -72,7 +72,7 @@ int main(void) {
     printf("File to download: %s\n", themeLocation); //Debugging.
 
     //Download the file specified in the txt file.
-#if(0) //Used to decrease the amount I'm downloading while testing
+//#if(0) //Used to decrease the amount I'm downloading while testing
     curl = curl_easy_init();
     if (curl) {
         struct FtpFile ftpfile = {
@@ -96,7 +96,7 @@ int main(void) {
 
         //Decompress file
         runExec((char *)ftpfile.filename, NULL);
-#endif
+//#endif
         //Run appropriate .bat file
         //This should allow changing into the install directory, and with
         //"AsLanguage3" or something added it should match the batch file.
@@ -106,26 +106,35 @@ int main(void) {
         //Cleanup
         //Remember to clean up theme.exe, themechoice.txt, and whatever the install directory was.
 
-        //Delete the install directory
-        sprintf(params, "%s /s /q", (char*)installName);
-        printf("rmdir command: rmdir %s\n", params);
-        runExec("rmdir", params);
-
-        //Delete theme.exe
-        sprintf(params, "theme.exe /q");
-        runExec("del", params);
-
-        //Delete themechoice.txt
-        sprintf(params, "themechoice.txt /q");
-        runExec("del", params);
-
         curl_easy_cleanup(curl);
         fclose(fp);
-    //} //Needs to be commented out with the #endif
+
+        //Delete the install directory
+        //This would be much better done with something other than system(),
+        //but when trying to use runExec, no DOS commands would work. They
+        //seem to require the path to be explicit. This would be fine if I
+        //could find some way to get the path from Windows that works in
+        //both WinXP and Windows 7. So far as I can tell, the way to do it
+        //changed multiple times between those versions, and is not possible.
+        //However, system() still works. It's just not a good idea.
+
+        sprintf(params, "rmdir %s /s /q", (char*)installName);
+        system(params);
+
+        //Delete theme.exe
+        sprintf(params, "del theme.exe /q");
+        system(params);
+
+        //Delete themechoice.txt
+        sprintf(params, "del themechoice.txt /q");
+        system(params);
+
+    } //Needs to be commented out with the #endif
     return 0;
 } //End of main()
 
 int runExec(char * filename, char * params){
+/*
     //Taken from:
     //http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1044654269&id=1043284392
       HINSTANCE hRet = ShellExecute(
@@ -136,17 +145,53 @@ int runExec(char * filename, char * params){
         NULL,         //Default directory
         SW_SHOW);     //How to open
 
-  /*
-  The function returns a HINSTANCE (not really useful in this case)
-  So therefore, to test its result, we cast it to a LONG.
-  Any value over 32 represents success!
-  */
+  //The function returns a HINSTANCE (not really useful in this case)
+  //So therefore, to test its result, we cast it to a LONG.
+  //Any value over 32 represents success!
 
   if((LONG)hRet <= 32)
   {
     MessageBox(HWND_DESKTOP,"Unable to start program","",MB_OK);
     return 1;
   }
+*/
+    //char cmdLine[FILENAME_MAX];
+    //sprintf(cmdLine, "%s %s", filename, params);
+    //printf("cmdLine: %s\n", cmdLine);
+    //Taken from https://msdn.microsoft.com/en-us/library/ms682512(VS.85).aspx
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
+
+    printf("filename: %s\n", filename);
+    system("cd");
+    // Start the child process.
+    if( !CreateProcess( NULL,   // No module name (use command line)
+        filename,        // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory
+        &si,            // Pointer to STARTUPINFO structure
+        &pi )           // Pointer to PROCESS_INFORMATION structure
+    )
+    {
+        printf( "CreateProcess failed (%d).\n", (int)GetLastError() );
+        return 1;
+    }
+
+    // Wait until child process exits.
+    WaitForSingleObject( pi.hProcess, INFINITE );
+
+    // Close process and thread handles.
+    CloseHandle( pi.hProcess );
+    CloseHandle( pi.hThread );
+
 
   return 0;
 }
@@ -198,8 +243,9 @@ void setInstallName(char * installName, char * themeLocation) {
                         exit(1); //This shouldn't happen.
                     installName[j] = themeLocation[i+j];
                     j++;
-                    //if (j>50) //failsafe on the while loop
-                    //    break;
+                    installName[j] = '\0';
+                    if (j>100) //failsafe on the while loop
+                        break;
                 }
             } else { //Should be reached when it's 'I' but not "Install"
                 continue;
