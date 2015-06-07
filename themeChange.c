@@ -34,8 +34,9 @@ int main(int argc, char *argv[]) {
 
     //Read in the command-line variables
     strcpy(libraryName, argv[1]);
-    machineNum = *argv[2];
-    languageNum = *argv[3];
+    machineNum = *argv[2] - '0';
+    languageNum = *argv[3] - '0';
+    //printf("argv2: %c, argv3: %c\n", *argv[2], *argv[3]);
 
     //Set the appropriate URL. This should be set by command line
     //The general idea is to download the appropriate text file that says
@@ -59,7 +60,6 @@ int main(int argc, char *argv[]) {
     libraryName[0] = toupper(libraryName[0]); //First letter is capitalized outside of URL usage
 
     printf("url: %s\n", url);
-    exit(0);
 
     curl = curl_easy_init();
     if (curl) {
