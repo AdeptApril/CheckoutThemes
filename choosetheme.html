@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script type="text/javascript" >
+
+	</script>
+	</head>
+	<body>
+		<form id="themechoice" action="http://www.rebol.com/cgi-bin/test-cgi.cgi">
+			<select id="library">
+			  <option>Library</option>
+				<option>Sequoya</option>
+			</select>
+			<select id="machineNum">
+				<option>Machine Number</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+			</select>
+			<select id="languageNum">
+				<option>Language Number</option>
+				<option>3</option>
+				<option>4</option>
+			</select>
+			<select id="theme">
+				<option>Theme</option>
+				<option>Storybook Nicky</option>
+			</select>
+			<input type="button" onclick="submit()" value="Submit">
+			<input type="button" onclick="reset()" value="Reset">
+		</form>
+		
+		<script>
+		function reset() {
+    	document.getElementById("themechoice").reset();
+		}
+		function submit() {
+    	document.getElementById("themechoice").submit();
+		}
+		</script>
+	</body>
+</html>
