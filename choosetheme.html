@@ -6,32 +6,36 @@
 	</script>
 	</head>
 	<body>
-		<form id="themechoice" action="http://www.rebol.com/cgi-bin/test-cgi.cgi">
+		<form id="themechoice" method="POST" action="choosetheme.php">
+            <label for="library">Library</label>
 			<select id="library">
-			  <option>Library</option>
 				<option>Sequoya</option>
-			</select>
+			</select><br>
+            <label for="machineNum">Machine Number</label>
 			<select id="machineNum">
-				<option>Machine Number</option>
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>
 				<option>4</option>
 				<option>5</option>
 				<option>6</option>
-			</select>
+			</select><br>
+            <label for="languageNum">Language Number</label>
 			<select id="languageNum">
-				<option>Language Number</option>
 				<option>3</option>
 				<option>4</option>
-			</select>
+			</select><br>
+            <label for="theme">Theme</label>
 			<select id="theme">
-				<option>Theme</option>
+                <option>Storybook Clay</option>
 				<option>Storybook Nicky</option>
-			</select>
+			</select><br>
+
 			<input type="button" onclick="submit()" value="Submit">
 			<input type="button" onclick="reset()" value="Reset">
+            <input type="button" onclick="displayThemes()" value="Display Themes"><br>
 		</form>
+            <div>Something</div>
 		
 		<script>
 		function reset() {
@@ -40,6 +44,17 @@
 		function submit() {
     	document.getElementById("themechoice").submit();
 		}
+        function displayThemes() {
+            $.ajax({
+                //type: "POST",
+                url: "order.html",
+                async: false,
+                //data:{action:'display'},
+                success:function(result) {
+                    $("div").html(result);
+                }
+            });
+        }
 		</script>
 	</body>
 </html>
