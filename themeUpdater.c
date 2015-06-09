@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         } while(c != EOF && c!= '\n');
     }
 
-    printf("File to download: %s\n", themeLocation); //Debugging.
+    printf("File to download: %s\n", themeLocation); //Debugging. But kept because it's seems useful to mention.
 
     //Download the file specified in the txt file.
     curl = curl_easy_init();
