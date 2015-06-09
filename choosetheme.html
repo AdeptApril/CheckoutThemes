@@ -2,17 +2,23 @@
 <html>
 	<head>
 	<script type="text/javascript" >
-
+$(document).ready(function(){
+    $("#displaythemes").click(function(){
+        $.ajax({url: "displaythemes.php", async: false, success: function(result){
+            $("div").html(result);
+        }});
+    });
+});
 	</script>
 	</head>
 	<body>
 		<form id="themechoice" method="POST" action="choosetheme.php">
             <label for="library">Library</label>
-			<select id="library">
+			<select name="library">
 				<option>Sequoya</option>
 			</select><br>
             <label for="machineNum">Machine Number</label>
-			<select id="machineNum">
+			<select name="machineNum">
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>
@@ -21,19 +27,63 @@
 				<option>6</option>
 			</select><br>
             <label for="languageNum">Language Number</label>
-			<select id="languageNum">
+			<select name="languageNum">
 				<option>3</option>
 				<option>4</option>
 			</select><br>
             <label for="theme">Theme</label>
-			<select id="theme">
-                <option>Storybook Clay</option>
-				<option>Storybook Nicky</option>
+			<select name="theme">
+				<option value="http://www.checkoutthemes.com/sequoya/InstallPirateThemeSequoya.exe">Pirate</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallPigThemeSequoya.exe">Pig Latin</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallZombieThemeSequoya.exe">Zombie</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallZombieHunterThemeSequoya.exe">Zombie Hunter</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationThemeSequoya.exe">Meditation</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationAmyThemeSequoya.exe">Meditation(Amy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationAndyThemeSequoya.exe">Meditation(Andy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationAstridThemeSequoya.exe">Meditation(Astrid)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationChrisThemeSequoya.exe">Meditation(Chris)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMeditationClayThemeSequoya.exe">Meditation(Clay)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkThemeSequoya.exe">Baby Talk</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkAndyThemeSequoya.exe">Baby Talk(Andy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkGreggThemeSequoya.exe">Baby Talk(Gregg)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkKatharineThemeSequoya.exe">Baby Talk(Katharine)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkLauraThemeSequoya.exe">Baby Talk(Laura)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkStephThemeSequoya.exe">Baby Talk(Steph)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBabyTalkSueThemeSequoya.exe">Baby Talk(Sue)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaThemeSequoya.exe">Ninja</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaSilentThemeSequoya.exe">Silent Ninja</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaAndyThemeSequoya.exe">Ninja Andy</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaCarolynThemeSequoya.exe">Ninja Carolyn</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaClayThemeSequoya.exe">Ninja Clay</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaDeenaThemeSequoya.exe">Ninja Deena</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaGreggThemeSequoya.exe">Ninja Gregg</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaLauraThemeSequoya.exe">Ninja Laura</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallNinjaStephThemeSequoya.exe">Ninja Steph</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallMusicalClayThemeSequoya.exe">Selfcheckout: The Musical</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallHaikuThemeSequoya.exe">Haiku</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallHaikuAmyThemeSequoya.exe">Haiku(Amy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallHaikuAndyThemeSequoya.exe">Haiku(Andy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallHaikuClayThemeSequoya.exe">Haiku(Clay)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallHaikuJeremyThemeSequoya.exe">Haiku(Jeremy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallTowelThemeSequoya.exe">Towel Day</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallRobotClayThemeSequoya.exe">Robot</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallGameshowThemeSequoya.exe">Gameshow</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBiscuitJuliaThemeSequoya.exe">Biscuit "Julia"</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBiscuitAmyThemeSequoya.exe">Biscuit Amy</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallBiscuitKjerstinThemeSequoya.exe">Biscuit Kjerstin</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallStorybookAndyThemeSequoya.exe">Storybook Andy</option>
+                <option value="http://www.checkoutthemes.com/sequoya/InstallStorybookClayThemeSequoya.exe">Storybook Clay</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallStorybookNickyThemeSequoya.exe">Storybook Nicky</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallThanksturkeySandyThemeSequoya.exe">Thanksturkey (Sandy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallThanksturkeyClayThemeSequoya.exe">Thanksturkey (Clay)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallIrishAndyThemeSequoya.exe">Irish (Andy)</option>
+				<option value="http://www.checkoutthemes.com/sequoya/InstallIrishClayThemeSequoya.exe">Irish (Clay)</option>
 			</select><br>
 
 			<input type="button" onclick="submit()" value="Submit">
 			<input type="button" onclick="reset()" value="Reset">
-            <input type="button" onclick="displayThemes()" value="Display Themes"><br>
+            <!-- <input type="button" name="displaythemes" onclick="displayThemes()" value="Display Themes"><br> -->
+            <button id=displaythemes>Display Themes</button>
 		</form>
             <div>Something</div>
 		
@@ -45,6 +95,8 @@
     	document.getElementById("themechoice").submit();
 		}
         function displayThemes() {
+        //$(document).ready(function(){
+        //$("displaythemes").click(function(){
             $.ajax({
                 //type: "POST",
                 url: "order.html",
@@ -54,6 +106,8 @@
                     $("div").html(result);
                 }
             });
+        //});
+        //});
         }
 		</script>
 	</body>
