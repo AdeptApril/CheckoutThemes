@@ -69,13 +69,16 @@ int main(int argc, char *argv[]) {
     curl = curl_easy_init();
     if (curl) {
         printf("Downloading that text file.\n");
-        //CURLcode res;
+        CURLcode res;
         fp = fopen(outfilename,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        //res =
-        curl_easy_perform(curl);
+        res = curl_easy_perform(curl);
+        if(CURLE_OK != res) {
+            // we failed
+            fprintf(stderr, "curl told us %d\n", res);
+        }
         //Cleanup
         fclose(fp);
         curl_easy_cleanup(curl);
@@ -104,6 +107,7 @@ int main(int argc, char *argv[]) {
     //Download the file specified in the txt file.
     curl = curl_easy_init();
     if (curl) {
+        CURLcode res;
         struct FtpFile ftpfile = {
             "theme.exe",
             NULL
@@ -112,21 +116,26 @@ int main(int argc, char *argv[]) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, my_fwrite);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
-        //res =
-        curl_easy_perform(curl);
-        /* if(CURLE_OK != res) {
+        /* Switch on full protocol/debug output */
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+
+        if(CURLE_OK != res) {
             // we failed
             fprintf(stderr, "curl told us %d\n", res);
-        } */
+        }
 
         if(ftpfile.stream){
             fclose(ftpfile.stream);
         }
         printf("File downloaded.\n");
-
+        //exit(0);
         //Decompress file
         printf("Decompressing file.\n");
-        runExec((char *)ftpfile.filename, NULL);
+        runExec("theme.exe /s", NULL);
         printf("Completed decompression.\n");
 
         //Run appropriate .bat file
@@ -141,7 +150,7 @@ int main(int argc, char *argv[]) {
         //Remember to clean up theme.exe, themechoice.txt, and whatever the install directory was.
 
         printf("Cleaning up, deleting downloaded/created files.\n");
-        curl_easy_cleanup(curl);
+        curl_global_cleanup();
         fclose(fp);
 
         //Deleting of the created files
@@ -214,7 +223,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 }
 
 static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
-{
+{ //verbatim from http://curl.haxx.se/libcurl/c/ftpget.html
   struct FtpFile *out=(struct FtpFile *)stream;
   if(out && !out->stream) {
     /* open file for writing */
