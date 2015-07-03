@@ -5,6 +5,7 @@
 #include <unistd.h> //For chdir()
 #include <ctype.h> //For tolower() and toupper()
 #define MAX_LIBRARY_NAME 20
+typedef enum { false, true } bool; //Being able to use bool is nice.
 
 struct FtpFile {
   const char *filename;
@@ -19,14 +20,22 @@ int run_exec(char * filename, char * params);
     //Used in a couple spots -- for running the compressed file, or a batch file.
 void set_install_name(char * install_name, char * theme_location);
     //"install_name" becomes the directory that the program goes into after extracting
+bool ok_install_name(char * install_name);
+    //Check to make sure that the install name doesn't contain bad characters.
 void run_batch(char * install_name, char * library_name, short language_num);
     //Goes into the install_name directory, runs the batch file, backs out.
 
 int main(int argc, char *argv[]) {
+    //Make sure that language number and machine number are between 1 and 9.
     if ( (argc != 4) || (*argv[2] < 1) || (*argv[2] > 9)
         || (*argv[3] < 1) || (*argv[3] > 9) ) {
-        printf("Usage: ThemeUpdater (Library Name) (Machine Number) (Language Number)\n");
+        printf("Usage: ThemeUpdater (Library Name) (Machine Number(1 to 9)) (Language Number(1 to 9))\n");
         exit(1);
+    }
+    //Make sure the library name will not cause an out-of-bounds memory problem.
+    if ( strlen(argv[1]) >= MAX_LIBRARY_NAME ) {
+        printf("Library name too long. Please contact program author if this was in error.");
+        exit(2);
     }
     printf("Downloading and installing a theme from checkoutthemes.com.\n");
     //Setup CURL and the local file
@@ -143,6 +152,11 @@ int main(int argc, char *argv[]) {
         //This should allow changing into the install directory, and with
         //"AsLanguage3" or something added it should match the batch file.
         set_install_name((char*)&install_name, (char*)&theme_location); //This is to get the directory to cd into
+        if( !ok_install_name((char*)&install_name) ) {
+            //Check the install name for bad characters, and exit if found.
+            printf("Something went wrong with the install name. Exiting\n");
+            exit(3);
+        }
         printf("Running install batch file\n");
         run_batch((char*)&install_name, (char*)&library_name, language_num);
         printf("Theme installed\n");
@@ -248,13 +262,15 @@ void set_install_name(char * install_name, char * theme_location) {
             if (theme_location[i] != 'I')
                 continue;
             //Massive if statement to see if it's "Install"
+            //TODO:
+            //Use strncmp(). See http://en.cppreference.com/w/c/string/byte/strncmp
             if ( (theme_location[i+1] == 'n') && (theme_location[i+2] == 's') && (theme_location[i+3] == 't') && (theme_location[i+4] == 'a') && (theme_location[i+5] == 'l') && (theme_location[i+6] == 'l') ) {
                 int j;
                 j = 7;
                 //While not ".exe"
                 while ( !( (theme_location[i+j] == '.') && (theme_location[i+j+1] == 'e') && (theme_location[i+j+2] == 'x') && (theme_location[i+j+3] == 'e') ) ){
                     if ( (theme_location[i+j] == '\n') || (theme_location[i+j] == EOF) )
-                        exit(1); //This shouldn't happen.
+                        exit(4); //This shouldn't happen.
                     install_name[j] = theme_location[i+j];
                     j++;
                     install_name[j] = '\0'; //If the end of the string isn't NULL, it can cause problems.
@@ -269,6 +285,13 @@ void set_install_name(char * install_name, char * theme_location) {
     return;
 }
 
+bool ok_install_name(char * install_name) {
+    //return true if no checked problematic characters appear
+    //return false if one of those characters appear
+    //TODO
+    return true;
+}
+
 void run_batch(char * install_name, char * library_name, short language_num){
     chdir(install_name); //Get into the directory to run the batch file first.
     //Using sprintf, then a while loop, then sprintf again, batchName should
@@ -278,6 +301,8 @@ void run_batch(char * install_name, char * library_name, short language_num){
     int b = strlen(batchName);
     int i = 0;
     //While not "Theme"
+    //TODO:
+    //Use strncmp(). See http://en.cppreference.com/w/c/string/byte/strncmp
     while ( !( (install_name[i] == 'T') && (install_name[i+1] == 'h') && (install_name[i+2] == 'e') && (install_name[i+3] == 'm') && (install_name[i+4] == 'e')) ){
         if ( (install_name[i] == '\n') || (install_name[i] == EOF) )
             exit(1); //This shouldn't happen.
