@@ -288,7 +288,27 @@ void set_install_name(char * install_name, char * theme_location) {
 bool ok_install_name(char * install_name) {
     //return true if no checked problematic characters appear
     //return false if one of those characters appear
-    //TODO
+    int length;
+    length = strlen(install_name);
+
+    if ( strstr(install_name, "\\") || strstr(install_name, "/") ) {
+        return false;
+    }
+
+    //install_name should definitely have "Install" and ".bat" in it, so
+    //it's at least 11 characters long. Probably can assume longer due to
+    //other things in a theme name.
+    if ( length < 12 || install_name == NULL ) {
+        return false;
+    }
+
+    //These are all batch files. Anything else should cause an exit.
+    if ( install_name[length-4] != '.' &&
+            install_name[length-3] != 'b' &&
+            install_name[length-2] != 'a' &&
+            install_name[length-1] != 't' ) {
+        return false;
+    }
     return true;
 }
 
