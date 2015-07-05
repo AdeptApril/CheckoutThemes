@@ -52,7 +52,9 @@ int main(int argc, char *argv[]) {
     strcpy(library_name, argv[1]);
     machine_num = *argv[2] - '0';
     language_num = *argv[3] - '0';
-    //printf("argv2: %c, argv3: %c\n", *argv[2], *argv[3]);
+
+    //TODO
+    //Check the library name against possible libraries
 
     //Set the appropriate URL. This should be set by command line
     //The general idea is to download the appropriate text file that says
@@ -88,6 +90,7 @@ int main(int argc, char *argv[]) {
         if(CURLE_OK != res) {
             // we failed
             fprintf(stderr, "curl told us %d\n", res);
+            exit(3);
         }
         //Cleanup
         fclose(fp);
@@ -107,12 +110,15 @@ int main(int argc, char *argv[]) {
             }
             if(pos >= (FILENAME_MAX - 1) ) {
                 //Output error
-                exit(1);
+                exit(4);
             }
         } while(c != EOF && c!= '\n');
     }
 
     printf("File to download: %s\n", theme_location); //Debugging. But kept because it's seems useful to mention.
+
+    //TODO:
+    //Check that theme_location is an acceptable file
 
     //Download the file specified in the txt file.
     curl = curl_easy_init();
@@ -136,13 +142,14 @@ int main(int argc, char *argv[]) {
         if(CURLE_OK != res) {
             // we failed
             fprintf(stderr, "curl told us %d\n", res);
+            exit(5);
         }
 
         if(ftpfile.stream){
             fclose(ftpfile.stream);
         }
         printf("File downloaded.\n");
-        //exit(0);
+
         //Decompress file
         printf("Decompressing file.\n");
         run_exec("theme.exe /s", NULL);
@@ -155,7 +162,7 @@ int main(int argc, char *argv[]) {
         if( !ok_install_name((char*)&install_name) ) {
             //Check the install name for bad characters, and exit if found.
             printf("Something went wrong with the install name. Exiting\n");
-            exit(3);
+            exit(6);
         }
         printf("Running install batch file\n");
         run_batch((char*)&install_name, (char*)&library_name, language_num);
@@ -270,7 +277,7 @@ void set_install_name(char * install_name, char * theme_location) {
                 //While not ".exe"
                 while ( !( (theme_location[i+j] == '.') && (theme_location[i+j+1] == 'e') && (theme_location[i+j+2] == 'x') && (theme_location[i+j+3] == 'e') ) ){
                     if ( (theme_location[i+j] == '\n') || (theme_location[i+j] == EOF) )
-                        exit(4); //This shouldn't happen.
+                        exit(7); //This shouldn't happen.
                     install_name[j] = theme_location[i+j];
                     j++;
                     install_name[j] = '\0'; //If the end of the string isn't NULL, it can cause problems.
@@ -325,7 +332,7 @@ void run_batch(char * install_name, char * library_name, short language_num){
     //Use strncmp(). See http://en.cppreference.com/w/c/string/byte/strncmp
     while ( !( (install_name[i] == 'T') && (install_name[i+1] == 'h') && (install_name[i+2] == 'e') && (install_name[i+3] == 'm') && (install_name[i+4] == 'e')) ){
         if ( (install_name[i] == '\n') || (install_name[i] == EOF) )
-            exit(1); //This shouldn't happen.
+            exit(8); //This shouldn't happen.
         batchName[b+i] = install_name[i];
         i++;
     }
