@@ -310,10 +310,10 @@ bool ok_install_name(char * install_name) {
     }
 
     //These are all batch files. Anything else should cause an exit.
-    if ( install_name[length-4] != '.' &&
-            install_name[length-3] != 'b' &&
-            install_name[length-2] != 'a' &&
-            install_name[length-1] != 't' ) {
+    if ( install_name[length-3] != '.' &&
+            install_name[length-2] != 'b' &&
+            install_name[length-1] != 'a' &&
+            install_name[length] != 't' ) {
         return false;
     }
     return true;
