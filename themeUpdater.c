@@ -27,8 +27,8 @@ void run_batch(char * install_name, char * library_name, short language_num);
 
 int main(int argc, char *argv[]) {
     //Make sure that language number and machine number are between 1 and 9.
-    if ( (argc != 4) || (*argv[2] < 1) || (*argv[2] > 9)
-        || (*argv[3] < 1) || (*argv[3] > 9) ) {
+    if ( (argc != 4) || (*argv[2] < '1') || (*argv[2] > '9')
+        || (*argv[3] < '1') || (*argv[3] > '9') ) {
         printf("Usage: ThemeUpdater (Library Name) (Machine Number(1 to 9)) (Language Number(1 to 9))\n");
         exit(1);
     }
