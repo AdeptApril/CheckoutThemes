@@ -5,6 +5,7 @@
 #include <unistd.h> //For chdir()
 #include <ctype.h> //For tolower() and toupper()
 #define MAX_LIBRARY_NAME 20
+typedef enum { false, true } bool; //Being able to use bool is nice.
 
 struct FtpFile {
   const char *filename;
@@ -15,34 +16,45 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream);
     //Used in first cURL call (getting a text file)
 static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream);
     //Used in second cURL call (downloading a self-executing compressed file
-int runExec(char * filename, char * params);
+int run_exec(char * filename, char * params);
     //Used in a couple spots -- for running the compressed file, or a batch file.
-void setInstallName(char * installName, char * themeLocation);
-    //"installName" becomes the directory that the program goes into after extracting
-void runBatch(char * installName, char * libraryName, short languageNum);
-    //Goes into the installName directory, runs the batch file, backs out.
+void set_install_name(char * install_name, char * theme_location);
+    //"install_name" becomes the directory that the program goes into after extracting
+bool ok_install_name(char * install_name);
+    //Check to make sure that the install name doesn't contain bad characters.
+void run_batch(char * install_name, char * library_name, short language_num);
+    //Goes into the install_name directory, runs the batch file, backs out.
 
 int main(int argc, char *argv[]) {
-    if ((argc != 4) || (*argv[2] < 1) || (*argv[3] < 1) ) {
-        printf("Usage: ThemeUpdater (libraryName) (machineNumber) (languageNumber)\n");
+    //Make sure that language number and machine number are between 1 and 9.
+    if ( (argc != 4) || (*argv[2] < '1') || (*argv[2] > '9')
+        || (*argv[3] < '1') || (*argv[3] > '9') ) {
+        printf("Usage: ThemeUpdater (Library Name) (Machine Number(1 to 9)) (Language Number(1 to 9))\n");
         exit(1);
+    }
+    //Make sure the library name will not cause an out-of-bounds memory problem.
+    if ( strlen(argv[1]) >= MAX_LIBRARY_NAME ) {
+        printf("Library name too long. Please contact program author if this was in error.");
+        exit(2);
     }
     printf("Downloading and installing a theme from checkoutthemes.com.\n");
     //Setup CURL and the local file
     CURL *curl;
     FILE *fp;
-    char themeLocation[FILENAME_MAX];
-    char libraryName[MAX_LIBRARY_NAME];
-    int machineNum;
-    int languageNum;
-    char installName[FILENAME_MAX];
+    char theme_location[FILENAME_MAX];
+    char library_name[MAX_LIBRARY_NAME];
+    int machine_num;
+    int language_num;
+    char install_name[FILENAME_MAX];
     char params[FILENAME_MAX];
 
     //Read in the command-line variables
-    strcpy(libraryName, argv[1]);
-    machineNum = *argv[2] - '0';
-    languageNum = *argv[3] - '0';
-    //printf("argv2: %c, argv3: %c\n", *argv[2], *argv[3]);
+    strcpy(library_name, argv[1]);
+    machine_num = *argv[2] - '0';
+    language_num = *argv[3] - '0';
+
+    //TODO
+    //Check the library name against possible libraries
 
     //Set the appropriate URL. This should be set by command line
     //The general idea is to download the appropriate text file that says
@@ -58,24 +70,28 @@ int main(int argc, char *argv[]) {
     //Setup library name for URL. Needs to be all lowercase. The first
     //letter should be capitalized in later usage.
     int i;
-    for(i = 0; libraryName[i]; i++) {
-        libraryName[i] = tolower(libraryName[i]);
+    for(i = 0; library_name[i]; i++) {
+        library_name[i] = tolower(library_name[i]);
     }
-    sprintf(url, "http://www.checkoutthemes.com/%s/checkout%d/lang%dchoice.txt", libraryName, machineNum, languageNum);
-    libraryName[0] = toupper(libraryName[0]); //First letter is capitalized outside of URL usage
+    sprintf(url, "http://www.checkoutthemes.com/%s/checkout%d/lang%dchoice.txt", library_name, machine_num, language_num);
+    library_name[0] = toupper(library_name[0]); //First letter is capitalized outside of URL usage
 
     printf("Theme choice URL: %s\n", url);
 
     curl = curl_easy_init();
     if (curl) {
         printf("Downloading that text file.\n");
-        //CURLcode res;
+        CURLcode res;
         fp = fopen(outfilename,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        //res =
-        curl_easy_perform(curl);
+        res = curl_easy_perform(curl);
+        if(CURLE_OK != res) {
+            // we failed
+            fprintf(stderr, "curl told us %d\n", res);
+            exit(3);
+        }
         //Cleanup
         fclose(fp);
         curl_easy_cleanup(curl);
@@ -89,35 +105,45 @@ int main(int argc, char *argv[]) {
         do{
             c = fgetc(fp);
             if(c != EOF) {
-                themeLocation[pos] = (char)c;
+                theme_location[pos] = (char)c;
                 pos++;
             }
             if(pos >= (FILENAME_MAX - 1) ) {
                 //Output error
-                exit(1);
+                exit(4);
             }
         } while(c != EOF && c!= '\n');
     }
 
-    printf("File to download: %s\n", themeLocation); //Debugging. But kept because it's seems useful to mention.
+    printf("File to download: %s\n", theme_location); //Debugging. But kept because it's seems useful to mention.
+
+    //TODO:
+    //Check that theme_location is an acceptable file
 
     //Download the file specified in the txt file.
     curl = curl_easy_init();
     if (curl) {
+        CURLcode res;
         struct FtpFile ftpfile = {
             "theme.exe",
             NULL
         };
-        strcpy(url, themeLocation);
+        strcpy(url, theme_location);
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, my_fwrite);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
-        //res =
-        curl_easy_perform(curl);
-        /* if(CURLE_OK != res) {
+        /* Switch on full protocol/debug output */
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+
+        if(CURLE_OK != res) {
             // we failed
             fprintf(stderr, "curl told us %d\n", res);
-        } */
+            exit(5);
+        }
 
         if(ftpfile.stream){
             fclose(ftpfile.stream);
@@ -126,27 +152,32 @@ int main(int argc, char *argv[]) {
 
         //Decompress file
         printf("Decompressing file.\n");
-        runExec((char *)ftpfile.filename, NULL);
+        run_exec("theme.exe /s", NULL);
         printf("Completed decompression.\n");
 
         //Run appropriate .bat file
         //This should allow changing into the install directory, and with
         //"AsLanguage3" or something added it should match the batch file.
-        setInstallName((char*)&installName, (char*)&themeLocation); //This is to get the directory to cd into
+        set_install_name((char*)&install_name, (char*)&theme_location); //This is to get the directory to cd into
+        if( !ok_install_name((char*)&install_name) ) {
+            //Check the install name for bad characters, and exit if found.
+            printf("Something went wrong with the install name. Exiting\n");
+            exit(6);
+        }
         printf("Running install batch file\n");
-        runBatch((char*)&installName, (char*)&libraryName, languageNum);
+        run_batch((char*)&install_name, (char*)&library_name, language_num);
         printf("Theme installed\n");
 
         //Cleanup
         //Remember to clean up theme.exe, themechoice.txt, and whatever the install directory was.
 
         printf("Cleaning up, deleting downloaded/created files.\n");
-        curl_easy_cleanup(curl);
+        curl_global_cleanup();
         fclose(fp);
 
         //Deleting of the created files
         //This would be much better done with something other than system(),
-        //but when trying to use runExec, no DOS commands would work. They
+        //but when trying to use run_exec, no DOS commands would work. They
         //seem to require the path to be explicit. This would be fine if I
         //could find some way to get the path from Windows that works in
         //both WinXP and Windows 7. So far as I can tell, the way to do it
@@ -154,7 +185,7 @@ int main(int argc, char *argv[]) {
         //However, system() still works. It's just not a good idea.
 
         //Delete the install directory
-        sprintf(params, "rmdir %s /s /q", (char*)installName);
+        sprintf(params, "rmdir %s /s /q", (char*)install_name);
         system(params);
 
         //Delete theme.exe
@@ -169,7 +200,7 @@ int main(int argc, char *argv[]) {
     return 0;
 } //End of main()
 
-int runExec(char * filename, char * params){
+int run_exec(char * filename, char * params){
     //Taken from https://msdn.microsoft.com/en-us/library/ms682512(VS.85).aspx
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
@@ -214,7 +245,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 }
 
 static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
-{
+{ //verbatim from http://curl.haxx.se/libcurl/c/ftpget.html
   struct FtpFile *out=(struct FtpFile *)stream;
   if(out && !out->stream) {
     /* open file for writing */
@@ -225,29 +256,31 @@ static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
   return fwrite(buffer, size, nmemb, out->stream);
 }
 
-void setInstallName(char * installName, char * themeLocation) {
+void set_install_name(char * install_name, char * theme_location) {
     //Use a loop to read characters until "Install" is seen
     //Then take everything from there until the '.exe', adding "Install" to the
     //string before adding those characters
     int i;
-    strcpy(installName, "Install");
-    if(themeLocation) { //Not sure if it's strictly necessary to check this.
-        for(i=0; i<strlen(themeLocation); i++) {
-            if ( (themeLocation[i] == EOF) || (themeLocation[i] == '\n') )
+    strcpy(install_name, "Install");
+    if(theme_location) { //Not sure if it's strictly necessary to check this.
+        for(i=0; i<strlen(theme_location); i++) {
+            if ( (theme_location[i] == EOF) || (theme_location[i] == '\n') )
                 break;
-            if (themeLocation[i] != 'I')
+            if (theme_location[i] != 'I')
                 continue;
             //Massive if statement to see if it's "Install"
-            if ( (themeLocation[i+1] == 'n') && (themeLocation[i+2] == 's') && (themeLocation[i+3] == 't') && (themeLocation[i+4] == 'a') && (themeLocation[i+5] == 'l') && (themeLocation[i+6] == 'l') ) {
+            //TODO:
+            //Use strncmp(). See http://en.cppreference.com/w/c/string/byte/strncmp
+            if ( (theme_location[i+1] == 'n') && (theme_location[i+2] == 's') && (theme_location[i+3] == 't') && (theme_location[i+4] == 'a') && (theme_location[i+5] == 'l') && (theme_location[i+6] == 'l') ) {
                 int j;
                 j = 7;
                 //While not ".exe"
-                while ( !( (themeLocation[i+j] == '.') && (themeLocation[i+j+1] == 'e') && (themeLocation[i+j+2] == 'x') && (themeLocation[i+j+3] == 'e') ) ){
-                    if ( (themeLocation[i+j] == '\n') || (themeLocation[i+j] == EOF) )
-                        exit(1); //This shouldn't happen.
-                    installName[j] = themeLocation[i+j];
+                while ( !( (theme_location[i+j] == '.') && (theme_location[i+j+1] == 'e') && (theme_location[i+j+2] == 'x') && (theme_location[i+j+3] == 'e') ) ){
+                    if ( (theme_location[i+j] == '\n') || (theme_location[i+j] == EOF) )
+                        exit(7); //This shouldn't happen.
+                    install_name[j] = theme_location[i+j];
                     j++;
-                    installName[j] = '\0'; //If the end of the string isn't NULL, it can cause problems.
+                    install_name[j] = '\0'; //If the end of the string isn't NULL, it can cause problems.
                     if (j>100) //failsafe on the while loop
                         break;
                 }
@@ -259,28 +292,57 @@ void setInstallName(char * installName, char * themeLocation) {
     return;
 }
 
-void runBatch(char * installName, char * libraryName, short languageNum){
-    chdir(installName); //Get into the directory to run the batch file first.
+bool ok_install_name(char * install_name) {
+    //return true if no checked problematic characters appear
+    //return false if one of those characters appear
+    int length;
+    length = strlen(install_name);
+
+    if ( strstr(install_name, "\\") || strstr(install_name, "/") ) {
+        return false;
+    }
+
+    //install_name should definitely have "Install" and ".bat" in it, so
+    //it's at least 11 characters long. Probably can assume longer due to
+    //other things in a theme name.
+    if ( length < 12 || install_name == NULL ) {
+        return false;
+    }
+
+    //These are all batch files. Anything else should cause an exit.
+    if ( install_name[length-3] != '.' &&
+            install_name[length-2] != 'b' &&
+            install_name[length-1] != 'a' &&
+            install_name[length] != 't' ) {
+        return false;
+    }
+    return true;
+}
+
+void run_batch(char * install_name, char * library_name, short language_num){
+    chdir(install_name); //Get into the directory to run the batch file first.
     //Using sprintf, then a while loop, then sprintf again, batchName should
     //eventually end up being in the format I've been creating batchNames
     char batchName[FILENAME_MAX];
-    sprintf(batchName, "%s%d", libraryName, languageNum);
+    sprintf(batchName, "%s%d", library_name, language_num);
     int b = strlen(batchName);
     int i = 0;
     //While not "Theme"
-    while ( !( (installName[i] == 'T') && (installName[i+1] == 'h') && (installName[i+2] == 'e') && (installName[i+3] == 'm') && (installName[i+4] == 'e')) ){
-        if ( (installName[i] == '\n') || (installName[i] == EOF) )
-            exit(1); //This shouldn't happen.
-        batchName[b+i] = installName[i];
+    //TODO:
+    //Use strncmp(). See http://en.cppreference.com/w/c/string/byte/strncmp
+    while ( !( (install_name[i] == 'T') && (install_name[i+1] == 'h') && (install_name[i+2] == 'e') && (install_name[i+3] == 'm') && (install_name[i+4] == 'e')) ){
+        if ( (install_name[i] == '\n') || (install_name[i] == EOF) )
+            exit(8); //This shouldn't happen.
+        batchName[b+i] = install_name[i];
         i++;
     }
     //strcat() would be another option, here, rather than giving a mid-string address for batchName
-    sprintf(&batchName[b+i], "AsLanguage%d.bat", languageNum);
+    sprintf(&batchName[b+i], "AsLanguage%d.bat", language_num);
     //printf("batchName: %s\n", batchName);
 
     //Now to actually execute the batch file
     system("@echo OFF");
-    runExec(batchName, NULL);
+    run_exec(batchName, NULL);
     system("@echo ON");
     chdir(".."); //Get back to the original directory.
     return;
