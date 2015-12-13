@@ -1,0 +1,6 @@
+Format is: ItemID type status
+3001 reference false
+3005 rental false
+3010 fiction true
+3015 non-fiction true
+3020 fiction false

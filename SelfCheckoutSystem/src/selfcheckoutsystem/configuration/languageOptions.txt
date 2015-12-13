@@ -1,0 +1,6 @@
+vecorobotclay.ini
+vecozomb.ini
+vecomeditation.ini
+vecopira.ini
+veconinja.ini
+vecopig.ini
