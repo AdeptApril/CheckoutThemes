@@ -1,1 +1,4 @@
 *.c~
+/SelfCheckoutSystem/nbproject/private/
+/SelfCheckoutSystem/build/
+/SelfCheckoutSystem/dist/
