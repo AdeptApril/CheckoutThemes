@@ -40,6 +40,14 @@ public class LoginForm extends javax.swing.JFrame {
       setPreferredSize(new java.awt.Dimension(640, 480));
       setSize(new java.awt.Dimension(640, 480));
       getContentPane().setLayout(null);
+
+      enterPatronID.addKeyListener(new java.awt.event.KeyAdapter()
+      {
+         public void keyPressed(java.awt.event.KeyEvent evt)
+         {
+            enterPatronIDKeyPressed(evt);
+         }
+      });
       getContentPane().add(enterPatronID);
       enterPatronID.setBounds(66, 244, 227, 25);
 
@@ -74,6 +82,13 @@ public class LoginForm extends javax.swing.JFrame {
         userID = enterPatronID.getText();
         this.setVisible(false);
     }//GEN-LAST:event_goButtonActionPerformed
+
+   private void enterPatronIDKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_enterPatronIDKeyPressed
+   {//GEN-HEADEREND:event_enterPatronIDKeyPressed
+      // TODO add your handling code here:
+      if(evt.getKeyCode()==java.awt.event.KeyEvent.VK_ENTER)
+         goButton.doClick();
+   }//GEN-LAST:event_enterPatronIDKeyPressed
 
     /**
      * @param args the command line arguments

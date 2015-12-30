@@ -45,12 +45,21 @@ public class EnterItemForm extends javax.swing.JFrame {
       setMinimumSize(new java.awt.Dimension(640, 480));
       getContentPane().setLayout(null);
 
+      cartTextArea.setEditable(false);
       cartTextArea.setColumns(20);
       cartTextArea.setRows(5);
       jScrollPane2.setViewportView(cartTextArea);
 
       getContentPane().add(jScrollPane2);
       jScrollPane2.setBounds(10, 70, 136, 340);
+
+      enterItemID.addKeyListener(new java.awt.event.KeyAdapter()
+      {
+         public void keyPressed(java.awt.event.KeyEvent evt)
+         {
+            enterItemIDKeyPressed(evt);
+         }
+      });
       getContentPane().add(enterItemID);
       enterItemID.setBounds(180, 380, 227, 25);
 
@@ -103,6 +112,13 @@ public class EnterItemForm extends javax.swing.JFrame {
         itemID = enterItemID.getText();
         this.setVisible(false);
    }//GEN-LAST:event_goButtonActionPerformed
+
+   private void enterItemIDKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_enterItemIDKeyPressed
+   {//GEN-HEADEREND:event_enterItemIDKeyPressed
+      // TODO add your handling code here:
+      if(evt.getKeyCode()==java.awt.event.KeyEvent.VK_ENTER)
+         goButton.doClick();
+   }//GEN-LAST:event_enterItemIDKeyPressed
 
     /**
      * @param args the command line arguments
