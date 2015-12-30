@@ -18,6 +18,7 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
+        enterPatronID.requestFocusInWindow();
     }
 
     /**
@@ -53,6 +54,7 @@ public class LoginForm extends javax.swing.JFrame {
       getContentPane().add(goButton);
       goButton.setBounds(299, 242, 67, 29);
 
+      LoginScreenTextArea.setEditable(false);
       LoginScreenTextArea.setColumns(20);
       LoginScreenTextArea.setRows(5);
       LoginScreenTextArea.setText("Enter user ID #");

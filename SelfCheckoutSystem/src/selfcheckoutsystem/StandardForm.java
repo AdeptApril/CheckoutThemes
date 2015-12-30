@@ -38,6 +38,7 @@ public class StandardForm extends javax.swing.JFrame {
       setBounds(new java.awt.Rectangle(0, 0, 640, 480));
       setMinimumSize(new java.awt.Dimension(640, 480));
 
+      EnterItemScreenTextArea.setEditable(false);
       EnterItemScreenTextArea.setColumns(20);
       EnterItemScreenTextArea.setRows(5);
       EnterItemScreenTextArea.setText("Goodbye text");

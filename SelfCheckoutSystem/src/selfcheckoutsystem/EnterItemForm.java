@@ -18,6 +18,7 @@ public class EnterItemForm extends javax.swing.JFrame {
      */
     public EnterItemForm() {
         initComponents();
+        enterItemID.requestFocusInWindow();
     }
 
     /**
@@ -40,9 +41,8 @@ public class EnterItemForm extends javax.swing.JFrame {
 
       setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
       setBounds(new java.awt.Rectangle(0, 0, 640, 480));
-      setMaximumSize(new java.awt.Dimension(640, 480));
+      setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
       setMinimumSize(new java.awt.Dimension(640, 480));
-      setPreferredSize(new java.awt.Dimension(640, 480));
       getContentPane().setLayout(null);
 
       cartTextArea.setColumns(20);
@@ -76,12 +76,14 @@ public class EnterItemForm extends javax.swing.JFrame {
       getContentPane().add(finishButton);
       finishButton.setBounds(420, 190, 165, 29);
 
+      EnterItemScreenTextArea.setEditable(false);
       EnterItemScreenTextArea.setColumns(20);
       EnterItemScreenTextArea.setRows(5);
       EnterItemScreenTextArea.setText("Enter item #");
       getContentPane().add(EnterItemScreenTextArea);
       EnterItemScreenTextArea.setBounds(160, 0, 324, 75);
 
+      backgroundImage.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
       backgroundImage.setMaximumSize(new java.awt.Dimension(640, 480));
       backgroundImage.setMinimumSize(new java.awt.Dimension(640, 480));
       getContentPane().add(backgroundImage);
