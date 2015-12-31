@@ -37,11 +37,6 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="language6Button" min="-2" pref="240" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" attributes="0">
-                      <Component id="language3Button" min="-2" pref="240" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="language4Button" min="-2" pref="240" max="-2" attributes="0"/>
-                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="language1Button" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
@@ -56,12 +51,18 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="language5Label" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
-                      <Component id="language6Label" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="language3Button" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
+                          <Component id="language5Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="language6Label" min="-2" max="-2" attributes="0"/>
+                          <Component id="language4Button" min="-2" pref="240" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="19" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -88,7 +89,7 @@
                   <Component id="language4Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
                   <Component id="language3Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="language5Label" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="language6Label" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -98,7 +99,7 @@
                   <Component id="language5Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
                   <Component id="language6Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="30" max="32767" attributes="0"/>
+              <EmptySpace pref="36" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.sound.sampled.*;
+import javax.sound.sampled.LineEvent.Type;
 import static java.lang.Thread.sleep;
 
 /**
@@ -240,25 +241,17 @@ public class SelfCheckoutSystem
    //Taken from http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
    public static synchronized void playSound(final String filename)
    {
-      new Thread(new Runnable()
+      try
       {
-         // The wrapper thread is unnecessary, unless it blocks on the
-         // Clip finishing; see comments.
-         public void run()
-         {
-            try
-            {
-               Clip clip = AudioSystem.getClip();
-               AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                       SelfCheckoutSystem.class.getClass().getResourceAsStream("/selfcheckoutsystem/sounds/" + filename));
-               clip.open(inputStream);
-               clip.start();
-            } catch (Exception e)
-            {
-               System.err.println(e.getMessage());
-            }
-         }
-      }).start();
+         Clip clip = AudioSystem.getClip();
+         AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                 SelfCheckoutSystem.class.getClass().getResourceAsStream("/selfcheckoutsystem/sounds/" + filename));
+         clip.open(inputStream);
+         clip.start();
+      } catch (Exception e)
+      {
+         System.out.println(e.getMessage());
+      }
    }
 
    private static void loadLanguageOptions()
