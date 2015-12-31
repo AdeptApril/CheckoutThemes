@@ -45,12 +45,16 @@ public class SelfCheckoutSystem
          Language lang2 = new Language(langOptions.get(1));
          Language lang3 = new Language(langOptions.get(2));
          Language lang4 = new Language(langOptions.get(3));
+         Language lang5 = new Language(langOptions.get(4));
+         Language lang6 = new Language(langOptions.get(5));
          //Load the LanguageSelectionForm
          LanguageSelectionForm lang = new LanguageSelectionForm();
          lang.updateLang1(lang1.name(), lang1.icon());
          lang.updateLang2(lang2.name(), lang2.icon());
          lang.updateLang3(lang3.name(), lang3.icon());
          lang.updateLang4(lang4.name(), lang4.icon());
+         lang.updateLang5(lang5.name(), lang5.icon());
+         lang.updateLang6(lang6.name(), lang6.icon());
          lang.setVisible(true);
          //That will choose which set of language text we'll use.
          while (lang.isVisible())

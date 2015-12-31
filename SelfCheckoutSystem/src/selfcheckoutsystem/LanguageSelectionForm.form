@@ -33,6 +33,11 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <Component id="language5Button" min="-2" pref="240" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="language6Button" min="-2" pref="240" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
                       <Component id="language3Button" min="-2" pref="240" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="language4Button" min="-2" pref="240" max="-2" attributes="0"/>
@@ -50,8 +55,13 @@
                           <Component id="language2Button" min="-2" pref="240" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="language5Label" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
+                      <Component id="language6Label" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -78,7 +88,17 @@
                   <Component id="language4Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
                   <Component id="language3Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="147" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="language5Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="language6Label" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="language5Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
+                  <Component id="language6Button" alignment="3" min="-2" pref="88" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="30" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -158,6 +178,44 @@
     <Component class="javax.swing.JLabel" name="language4Label">
       <Properties>
         <Property name="text" type="java.lang.String" value="Language 4"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="language5Button">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Language 5"/>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[240, 88]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[240, 88]"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="language5ButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="language5Label">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Language 5"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="language6Button">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Language 6"/>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[240, 88]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[240, 88]"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="language6ButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="language6Label">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Language 6"/>
       </Properties>
     </Component>
   </SubComponents>
