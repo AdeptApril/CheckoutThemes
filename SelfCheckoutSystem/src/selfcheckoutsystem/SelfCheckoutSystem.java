@@ -8,8 +8,8 @@ package selfcheckoutsystem;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.awt.Font;
 import javax.sound.sampled.*;
-import javax.sound.sampled.LineEvent.Type;
 import static java.lang.Thread.sleep;
 
 /**
@@ -69,7 +69,7 @@ public class SelfCheckoutSystem
          //Load the login screen
          LoginForm login = new LoginForm();
          login.setBackground(chosenLang.scanCardImage());
-         login.setText(chosenLang.scanCardText());
+         login.setText(chosenLang.scanCardText(), chosenLang.scanCardFont());
          login.setVisible(true);
          playSound(chosenLang.scanCardSound());
          while (login.isVisible())

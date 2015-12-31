@@ -6,6 +6,7 @@
 package selfcheckoutsystem;
 
 import java.net.URL;
+import java.awt.Font;
 
 /**
  *
@@ -37,19 +38,12 @@ public class LoginForm extends javax.swing.JFrame {
       backgroundImage = new javax.swing.JLabel();
 
       setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-      setPreferredSize(new java.awt.Dimension(640, 480));
-      setSize(new java.awt.Dimension(640, 480));
+      setBackground(new java.awt.Color(255, 255, 255));
+      setPreferredSize(new java.awt.Dimension(800, 600));
+      setSize(new java.awt.Dimension(800, 600));
       getContentPane().setLayout(null);
-
-      enterPatronID.addKeyListener(new java.awt.event.KeyAdapter()
-      {
-         public void keyPressed(java.awt.event.KeyEvent evt)
-         {
-            enterPatronIDKeyPressed(evt);
-         }
-      });
       getContentPane().add(enterPatronID);
-      enterPatronID.setBounds(66, 244, 227, 25);
+      enterPatronID.setBounds(80, 430, 227, 25);
 
       goButton.setText("Go");
       goButton.addActionListener(new java.awt.event.ActionListener()
@@ -60,19 +54,19 @@ public class LoginForm extends javax.swing.JFrame {
          }
       });
       getContentPane().add(goButton);
-      goButton.setBounds(299, 242, 67, 29);
+      goButton.setBounds(320, 430, 67, 29);
 
-      LoginScreenTextArea.setEditable(false);
       LoginScreenTextArea.setColumns(20);
+      LoginScreenTextArea.setLineWrap(true);
       LoginScreenTextArea.setRows(5);
       LoginScreenTextArea.setText("Enter user ID #");
       getContentPane().add(LoginScreenTextArea);
-      LoginScreenTextArea.setBounds(20, 10, 480, 75);
+      LoginScreenTextArea.setBounds(0, 0, 800, 80);
 
       backgroundImage.setMaximumSize(new java.awt.Dimension(640, 480));
       backgroundImage.setMinimumSize(new java.awt.Dimension(640, 480));
       getContentPane().add(backgroundImage);
-      backgroundImage.setBounds(0, 0, 610, 510);
+      backgroundImage.setBounds(0, 80, 610, 510);
 
       pack();
    }// </editor-fold>//GEN-END:initComponents
@@ -82,13 +76,6 @@ public class LoginForm extends javax.swing.JFrame {
         userID = enterPatronID.getText();
         this.setVisible(false);
     }//GEN-LAST:event_goButtonActionPerformed
-
-   private void enterPatronIDKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_enterPatronIDKeyPressed
-   {//GEN-HEADEREND:event_enterPatronIDKeyPressed
-      // TODO add your handling code here:
-      if(evt.getKeyCode()==java.awt.event.KeyEvent.VK_ENTER)
-         goButton.doClick();
-   }//GEN-LAST:event_enterPatronIDKeyPressed
 
     /**
      * @param args the command line arguments
@@ -140,8 +127,9 @@ public class LoginForm extends javax.swing.JFrame {
       }
    }
    
-   public void setText(String text)
+   public void setText(String text, Font font)
    {
+      LoginScreenTextArea.setFont(font);
       LoginScreenTextArea.setText(text);
    }
 

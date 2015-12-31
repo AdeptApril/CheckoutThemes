@@ -8,6 +8,7 @@ package selfcheckoutsystem;
 import java.net.URL;
 import java.util.*;
 import java.io.*;
+import java.awt.Font;
 
 /**
  *
@@ -93,6 +94,12 @@ public class Language
          if (line.contains("MessageText="))
          {
             scanCardText = line.replace("MessageText=", "");
+         }
+         if (line.contains("MessageTextSize="))
+         {
+            String scanCardFontSize = line.replace("MessageTextSize=", "");
+            //Could read the font type, but it's unlikely that the font will match up.
+            scanCardFont = new Font("DejaVu Sans", Font.PLAIN, (int)((Integer.parseInt(scanCardFontSize))*1) );
          }
          if (line.contains("PictureFile="))
          {
@@ -184,7 +191,7 @@ public class Language
 
    //[BadCard]
    /**
-    * Sets all the needed bits for the Take Receipt (Goodbye) screen
+    * Sets all the needed bits for the Bad Card screen
     */
    private void setBadCard()
    {
@@ -236,7 +243,7 @@ public class Language
 
    //[ItemAlreadyAttempted]
    /**
-    * Sets all the needed bits for the Take Receipt (Goodbye) screen
+    * Sets all the needed bits for the Item Already Attempted screen
     */
    private void setItemAlreadyAttempted()
    {
@@ -273,6 +280,11 @@ public class Language
    public String scanCardText()
    {
       return scanCardText;
+   }
+   
+   public Font scanCardFont()
+   {
+      return scanCardFont;
    }
 
    public String scanCardImage()
@@ -382,6 +394,7 @@ public class Language
    private String scanCardImage = null;
    private String scanCardSound = null;
    private String scanItemText = null;
+   private Font scanCardFont = null;
    private String scanItemImage = null;
    private String scanItemSound = null;
    private String goodItemText = null;
