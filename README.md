@@ -14,6 +14,7 @@ http://www.checkoutthemes.com/credits.html for appropriate licensing info
 -------------------------------------------------
 chooseTheme directory contains items related to remotely choosing which themes
 to have on the checkout machine it's called from.
+The code is written in C (for the theme updater) and PHP (for the website)
 
 As part of that:
 themeUpdater.exe -
