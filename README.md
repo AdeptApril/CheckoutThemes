@@ -2,7 +2,7 @@ CheckoutThemes
 -------------------------------------------------
 Code related to checkoutthemes.com
 -------------------------------------------------
-Most code by C A Monoceros
+Most code by April Monoceros
 Some code for the theme-displaying program by Jose Martin. Program was originally
 made as a project for a class. See https://github.com/AdeptApril/A2Project for
 further details.
